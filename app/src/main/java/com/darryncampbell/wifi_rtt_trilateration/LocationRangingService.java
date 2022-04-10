@@ -36,7 +36,13 @@ import com.lemmingapex.trilateration.TrilaterationFunction;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer;
 import org.apache.commons.math3.fitting.leastsquares.LevenbergMarquardtOptimizer;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -80,7 +86,7 @@ public class LocationRangingService extends Service {
         mWifiRttManager = (WifiRttManager) getSystemService(Context.WIFI_RTT_RANGING_SERVICE);
         mRttRangingResultCallback = new RttRangingResultCallback();
         //configuration = new Configuration(Configuration.CONFIGURATION_TYPE.TESTING_2);
-        configuration = new Configuration(Configuration.CONFIGURATION_TYPE.TWO_DIMENSIONAL_2);
+        configuration = new Configuration(Configuration.CONFIGURATION_TYPE.TWO_DIMENSIONAL_3);
         buildingMap = configuration.getConfiguration();
         Collections.sort(buildingMap);
 
@@ -278,6 +284,7 @@ public class LocationRangingService extends Service {
                     e.printStackTrace();
                 }
             }
+            
 //            List<ScanResult> scanResults = mWifiManager.getScanResults();
 //            if (scanResults != null) {
 //
@@ -379,7 +386,7 @@ public class LocationRangingService extends Service {
                     RangingResult rangingResult = rangingResultsList.get(i);
                     if (!configuration.getMacAddresses().contains(rangingResult.getMacAddress().toString())) {
                         //  The Mac address found is not in our configuration
-                        showMessage("Unrecognised MAC address: " + rangingResult.getMacAddress().toString() + ", ignoring");
+                        //showMessage("Unrecognised MAC address: " + rangingResult.getMacAddress().toString() + ", ignoring");
                     } else {
                         if (rangingResult.getStatus() == RangingResult.STATUS_SUCCESS) {
 
@@ -441,11 +448,21 @@ public class LocationRangingService extends Service {
                 //  Create the positions and distances arrays required by the multilateration algorithm
                 double[][] positions = new double[buildingMap.size()][3]; //  3 dimensions
                 double[] distances = new double[buildingMap.size()];
+
                 for (int i = 0; i < buildingMap.size(); i++)
                 {
                     positions[i] = buildingMap.get(i).getPosition();
-                    distances[i] = weighted_average(historicalDistances.get(rangingResultsOfInterest.get(i).getMacAddress().toString()));
+                    ArrayList<RangingResult> his = historicalDistances.get(rangingResultsOfInterest.get(i).getMacAddress().toString());
+                    if (his.size() > 10) {
+                        distances[i] = weighted_average(his.subList(his.size()-9,his.size()-1));
+                    }
+                    else {
+                        distances[i] = weighted_average(historicalDistances.get(rangingResultsOfInterest.get(i).getMacAddress().toString()));
+                    }
+                    //ArrayList<RangingResult> dis_array = historicalDistances.get(rangingResultsOfInterest.get(i).getMacAddress().toString());
+                    //distances[i] = dis_array.get(dis_array.size()-1).getDistanceMm();
                 }
+
 
                 try {
                     NonLinearLeastSquaresSolver solver = new NonLinearLeastSquaresSolver(new TrilaterationFunction(positions, distances), new LevenbergMarquardtOptimizer());
@@ -463,6 +480,18 @@ public class LocationRangingService extends Service {
                     showMessage("Error during trilateration: " + e.getMessage());
                 }
 
+//                try {
+//                    DatagramSocket socket = new DatagramSocket(20000);
+//                    InetAddress serverAddress = InetAddress.getByName("172.20.10.11");
+//                    String str = "hello";
+//                    byte data[] = str.getBytes();
+//                    DatagramPacket pack = new DatagramPacket (data , data.length , serverAddress , 8080);
+//                    socket.send(pack);
+//                } catch (SocketException | UnknownHostException e) {
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
             }
             else
             {

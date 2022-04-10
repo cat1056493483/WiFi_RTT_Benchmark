@@ -13,6 +13,7 @@ public class Configuration {
         THREE_DIMENSIONAL_1,
         TWO_DIMENSIONAL_1,   //  2D will just set all the 3rd dimensions to 0.0
         TWO_DIMENSIONAL_2,
+        TWO_DIMENSIONAL_3,
         TESTING,
         TESTING_2,
         TESTING_3
@@ -22,6 +23,7 @@ public class Configuration {
     AccessPoint ap2;
     AccessPoint ap3;
     AccessPoint ap4;
+    AccessPoint ap5;
     ArrayList<AccessPoint> accessPoints;
     ArrayList<String> macAddresses;
     ArrayList<Integer> apOffsets;
@@ -30,6 +32,7 @@ public class Configuration {
     int ap2_offset;
     int ap3_offset;
     int ap4_offset;
+    int ap5_offset;
 
     public Configuration(CONFIGURATION_TYPE configuration_type)
     {
@@ -104,7 +107,9 @@ public class Configuration {
 
             ap1_offset = 11000;
             ap2_offset = -7000;
-            ap3_offset = -900;
+            ap3_offset = -1100;
+            ap4_offset = -1000;
+            ap5_offset = -1000;
 
             accessPoints = new ArrayList<>();
             macAddresses = new ArrayList<>();
@@ -121,6 +126,46 @@ public class Configuration {
             macAddresses.add(ap1.getBssid());
             macAddresses.add(ap2.getBssid());
             macAddresses.add(ap3.getBssid());
+        }
+        else if (configuration_type == CONFIGURATION_TYPE.TWO_DIMENSIONAL_3)
+        {
+            //  The configuration consists of a number of Access points in 3 dimensional space (x,y,z) identified by their BSSID
+            //  Description:
+            //  3 APs, one in the lounge by the bay window and one in the dining room, on the floor in front of the dresser (in line with right foot)
+            //  1 in the downstairs study (below socket)
+            ap1 = new AccessPoint("d4:35:38:75:ec:bd", 0, 3800, 0.0, "Xiaomi_ax3000");
+            ap2 = new AccessPoint("04:d4:c4:63:5a:9c", 8000, 3800, 0.0, "Ausu_98");
+            ap3 = new AccessPoint("08:b4:b1:66:db:9b", 0, 0, 0.0, "Google_WiFI");
+            ap4 = new AccessPoint("e8:9f:80:8d:f9:cf", 8000, 0, 0.0, "Velop1");
+            ap5 = new AccessPoint("e8:9f:80:8d:f5:43", 4000, 1900, 0.0, "Velop2");
+
+            ap1_offset = 11000;
+            ap2_offset = -7000;
+            ap3_offset = -1100;
+            ap4_offset = -500;
+            ap5_offset = -500;
+
+            accessPoints = new ArrayList<>();
+            macAddresses = new ArrayList<>();
+            apOffsets = new ArrayList<>();
+
+            accessPoints.add(ap1);
+            accessPoints.add(ap2);
+            accessPoints.add(ap3);
+            accessPoints.add(ap4);
+            accessPoints.add(ap5);
+
+            apOffsets.add(ap1_offset);
+            apOffsets.add(ap2_offset);
+            apOffsets.add(ap3_offset);
+            apOffsets.add(ap4_offset);
+            apOffsets.add(ap5_offset);
+
+            macAddresses.add(ap1.getBssid());
+            macAddresses.add(ap2.getBssid());
+            macAddresses.add(ap3.getBssid());
+            macAddresses.add(ap4.getBssid());
+            macAddresses.add(ap5.getBssid());
         }
         else if (configuration_type == CONFIGURATION_TYPE.TESTING)
         {

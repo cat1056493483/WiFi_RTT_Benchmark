@@ -64,7 +64,7 @@ public class MapActivity extends AppCompatActivity {
 
         //  0,0 point is 82.4427% down the image and 2.336% from the left of the image
         float x_image_offset = (ImageView_BitmapView.getWidth() * 0.02336f);
-        float y_image_offset = (ImageView_BitmapView.getHeight() * 0.824427f);
+        float y_image_offset = (ImageView_BitmapView.getHeight() * 0.994427f);
 
         x_image_offset = ImageView_BitmapView.getX() + x_image_offset;
         y_image_offset = ImageView_BitmapView.getY() + y_image_offset;
@@ -79,18 +79,19 @@ public class MapActivity extends AppCompatActivity {
         // ImageView_Pin.setX(pinOriginX);
         // ImageView_Pin.setY(pinOriginY);
 
+        //
         float floorWidth = ImageView_BitmapView.getWidth() * (7600.0f / 3982.0f);
         float floorHeight = ImageView_BitmapView.getHeight() * (4000.0f / 2096.0f);
 
 //        // 将实际坐标放缩后投影到地图上
-        float scaledX = (float) (7600.0f / 7600.0f * floorWidth);
-        float scaledY = (float) (0.0f / 4000.0f * floorHeight);
+        float scaledX = (float) (x / 7600.0f * floorWidth);
+        float scaledY = (float) (y / 4000.0f * floorHeight);
 //
 //        // 在地图上画点
 //        ImageView_Pin.setX(pinOriginX + scaledX);
 //        ImageView_Pin.setY(pinOriginY - scaledY);
-        ImageView_Pin.setX(pinOriginX + scaledX);
-        ImageView_Pin.setY(pinOriginY + scaledY);
+        ImageView_Pin.setX(pinOriginX + scaledX/2.02f);
+        ImageView_Pin.setY(pinOriginY - scaledY/2.1f);
     }
 
     private class LocationRangingServiceReceiver extends BroadcastReceiver
